@@ -5,7 +5,7 @@ import LDA
 import KNN
 
 
-def compare(disc_set, Train_LDA, W, label, testNum, testInClass, k):
+def compare(disc_set, Train_LDA, W, label, testNum, classNum,k):
     '''
     计算一个测试集的正确率
     :param disc_set: PCA投影空间
@@ -26,18 +26,19 @@ def compare(disc_set, Train_LDA, W, label, testNum, testInClass, k):
     # print('测试图像维度',testImg.shape)
     # redVects=np.reshape(redVects, (-1, 1))
     #print('redV', W.shape)
-    testImgSet=createImageSet.createTestMat('Yale',testInClass,testNum,100*100)
+    testImgSet=createImageSet.createTestMat('Yale',classNum,testNum,100*100)
     #testImgSet = createImageSet.createTestMat('Yale', testInClass, testNum, testInClass, 100 * 100)
-    testImgSet = disc_set.T.dot(testImgSet)
-    testImgSet = W.T.dot(testImgSet)
+    testImgSet = disc_set.T*(testImgSet)
+    testImgSet = W.T*(testImgSet)
+    #print('testSet',testImgSet.shape)
     resVal = 0
     for res in range(testNum):
         # TrainVec = FaceVector.T * diffTrain[:, i]
         #print(Train_LDA.shape)
-        print('res',res+1)
-        if (KNN.classify0(testImgSet.T[res], Train_LDA.T, label, k) == (res+1)):
+        #print('res',res+1)
+        scs=int(KNN.classify0(testImgSet.T[res], Train_LDA.T, label, k))
+        if (scs == classNum):
             resVal = resVal + 1
-    print(resVal, "+ ", testNum)
     correctCount = resVal / testNum  # 正确率
     print("correctCount", correctCount)
     return correctCount
@@ -53,12 +54,12 @@ def getResult(dataMat, label, testNum, classNum):
     :return:
     '''
     Count = 0
-    disc_set, disc_value = LDA.pca(dataMat, 50)
-    redVects, Train_LDA = LDA.lda(dataMat, 50, 15, 11, 165)  # LDA投影空间，最终的训练集
+    disc_set, disc_value = LDA.pca(dataMat, 85)
+    redVects, Train_LDA = LDA.lda(dataMat, label,85, 15, 11, 165)  # LDA投影空间，最终的训练集
     for classnum in range(1, classNum + 1):
         print('第',classnum,'类')
-        Count += compare(disc_set, Train_LDA, redVects, label, testNum, classnum, 20)
-    print('Final correctCount:', Count)
+        Count += compare(disc_set, Train_LDA, redVects, label, testNum,classnum, 7)
+    print('Final correctCount:', Count/classNum)
 
 
 if __name__ == '__main__':

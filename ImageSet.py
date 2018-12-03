@@ -24,16 +24,24 @@ def HistogramEqualization(Img):
     # img = cv.imread(Img)
     img = cv.imread(Img, cv.IMREAD_GRAYSCALE)  # 读取彩色图像为灰度图
 
-    # print('原始图像数组',img)
-    # lut = np.zeros(256, dtype=img.dtype)  # 创建空的查找表
-    hist, bins = np.histogram(img.flatten(), 256, [0, 256])  # 获取直方图
-    cdf = hist.cumsum()  # 计算累积直方图
-    cdf_m = np.ma.masked_equal(cdf, 0)  # 除去直方图中的0值
-    cdf_m = (cdf_m - cdf_m.min()) * 255 / (cdf_m.max() - cdf_m.min())
-    cdf = np.ma.filled(cdf_m, 0).astype('uint8')  # 将掩模处理掉的元素补为0
 
-    # 直方图均衡化
-    result = cdf[img]
+
+
+    # # print('原始图像数组',img)
+    # # lut = np.zeros(256, dtype=img.dtype)  # 创建空的查找表
+    # hist, bins = np.histogram(img.flatten(), 256, [0, 256])  # 获取直方图
+    # cdf = hist.cumsum()  # 计算累积直方图
+    # cdf_m = np.ma.masked_equal(cdf, 0)  # 除去直方图中的0值
+    # cdf_m = (cdf_m - cdf_m.min()) * 255 / (cdf_m.max() - cdf_m.min())
+    # cdf = np.ma.filled(cdf_m, 0).astype('uint8')  # 将掩模处理掉的元素补为0
+    #
+    # # 直方图均衡化
+    # result = cdf[img]
+
+    result = cv.equalizeHist(img)
+
+
+
     # print('均衡化后图像数组', result)
     # cv.imshow("NumPyLUT", result)
     # cv.waitKey(0)

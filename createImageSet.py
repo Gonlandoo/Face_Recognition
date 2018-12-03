@@ -59,7 +59,7 @@ def createImageMat(dirName, classNum, classInNum, ImageNum, ImageSize):
     for classnum in range(1, classNum + 1):
         for classinnum in range(1, classInNum + 1):
             img = ImageSet.HistogramEqualization(
-                './' + str(dirName) + '/' + str(classNum) + '/' + 's' + str(classinnum) + '.bmp')
+                './' + str(dirName) + '/' + str(classnum) + '/' + 's' + str(classinnum) + '.bmp')
             # print('均衡化后的图像矩阵',img)
             tempImg = np.reshape(img, (-1, 1))  # 每张图转化为一列
             if index == 0:
@@ -89,13 +89,13 @@ def createTestMat(dirName, classNum, testNum, ImageSize):
     testMat = np.zeros((testNum, ImageSize))
     index = 0
     for i in range(1, testNum + 1):
-        #dic = './' + str(dirName) + '/' + str(classNum) + '/' + 's' + str(i) + '.bmp'
+        # dic = './' + str(dirName) + '/' + str(classNum) + '/' + 's' + str(i) + '.bmp'
         img = ImageSet.HistogramEqualization(
             './' + str(dirName) + '/' + str(classNum) + '/' + 's' + str(i) + '.bmp')
-        #cv2.imshow(str(classNum) + '/' + 's', img)
-        #name=str(classNum) + '/' + 's'+ str(i)
-        #print('name',name)
-        #cv2.waitKey(0)
+        # cv2.imshow(str(classNum) + '/' + 's', img)
+        # name=str(classNum) + '/' + 's'+ str(i)
+        # print('name',name)
+        # cv2.waitKey(0)
         tempImg = np.reshape(img, (-1, 1))  # 每张图转化为一列
         if index == 0:
             testMat = tempImg

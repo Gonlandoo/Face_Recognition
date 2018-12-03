@@ -31,7 +31,7 @@ class FisherFace(object):
         :param dirName: 包含训练数据集的图像文件夹路径
         :return: 包含样本矩阵的列表，标签列表
         '''
-        dataMat = np.zeros((15, 1))
+        dataMat = np.zeros((10, 1))
         label = []
         dataList = []
         for parent, dirnames, filenames in os.walk(dirName):
@@ -42,7 +42,7 @@ class FisherFace(object):
             for dirname in dirnames:
                 for subParent, subDirName, subFilenames in os.walk(parent + '/' + dirname):
                     for index, filename in enumerate(subFilenames):
-                        img = self.loadImg(subParent + '/' + 's' + filename, self.dsize)
+                        img = self.loadImg(subParent + '/' + filename, self.dsize)
                         tempImg = np.reshape(img, (-1, 1))
                         if index == 0:
                             dataMat = tempImg
@@ -76,29 +76,34 @@ class FisherFace(object):
             dataMat = dataMat - meanMat
             sw = dataMat * dataMat.T
             Sw += sw
-        print('Sw的维度', Sw.shape)
+        print
+        ('Sw的维度', Sw.shape)
 
         for index, meanMat in enumerate(meanList):
             m = sampleNum[index]
             u += m * meanMat
             N += m
         u = u / N
-        print('u的维度', u.shape)
+        print
+        ('u的维度', u.shape)
 
         for index, meanMat in enumerate(meanList):
             m = sampleNum[index]
             sb = m * (meanMat - u) * (meanMat - u).T
             Sb += sb
-        print('Sb的维度', Sb.shape)
+        print
+        ('Sb的维度', Sb.shape)
 
         eigVals, eigVects = np.linalg.eig(np.mat(np.linalg.inv(Sw) * Sb))
         eigValInd = np.argsort(eigVals)
         eigValInd = eigValInd[::-1]
         eigValInd = eigValInd[:k]  # 取出指定个数的前k大的特征值
-        print('选取的特征值', eigValInd.shape)
+        print
+        ('选取的特征值', eigValInd.shape)
         eigVects = eigVects / np.linalg.norm(eigVects, axis=0)  # 归一化特征向量
         redEigVects = eigVects[:, eigValInd]
-        print('变换矩阵维度', redEigVects.shape)
+        print
+        ('变换矩阵维度', redEigVects.shape)
 
         transMatList = []
         for dataMat in dataList:
@@ -113,22 +118,23 @@ class FisherFace(object):
         :param label: 标签矩阵
         :return: 与测试图片最相近的图像文件夹，也就是类别
         '''
-        #testImg = cv2.resize(testImg, self.dsize)
-        #testImg = cv2.cvtColor(testImg, cv2.COLOR_RGB2GRAY)
-        testImg = cv2.imread(testImg, cv2.IMREAD_GRAYSCALE)  # 读取彩色图像为灰度图
+        testImg = cv2.resize(testImg, self.dsize)
+        testImg = cv2.cvtColor(testImg, cv2.COLOR_RGB2GRAY)
         testImg = np.reshape(testImg, (-1, 1))
         transMatList, redVects = fisherface.LDA(dataList, self.k)
         testImg = redVects.T * testImg
-        #print('检测样本变换后的维度', testImg.shape)
+        print
+        ('检测样本变换后的维度', testImg.shape)
         disList = []
         testVec = np.reshape(testImg, (1, -1))
         sumVec = np.mat(np.zeros((self.dsize[0] * self.dsize[1], 1)))
         for transMat in transMatList:
             for sample in transMat.T:
                 disList.append(np.linalg.norm(testVec - sample))
-        #print(disList)
+        print
+        (disList)
         sortIndex = np.argsort(disList)
-        return label[sortIndex[0] / 14]
+        return label[sortIndex[0] / 9]
 
     def predict(self, dirName, testFileName):
         '''
@@ -139,12 +145,14 @@ class FisherFace(object):
         '''
         testImg = cv2.imread(testFileName)
         dataMat, label = self.createImgMat(dirName)
-        print('加载图片标签', label)
+        print
+        ('加载图片标签', label)
         ans = self.compare(dataMat, testImg, label)
         return ans
 
 
 if __name__ == "__main__":
-    fisherface = FisherFace(15, 11, (100, 100))
-    ans = fisherface.predict('./Yale', './Yale/1/s1.bmp')
-    print(ans)
+    fisherface = FisherFace(10, 20, (100, 100))
+    ans = fisherface.predict('./Yale', './Yale/2/s1.bmp')
+    print
+    (ans)
