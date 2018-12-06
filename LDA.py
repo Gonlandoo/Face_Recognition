@@ -40,7 +40,7 @@ def pca(dataMat, dimNum):
     return disc_set, disc_value
 
 
-# 奇异矩阵求逆
+#奇异矩阵求逆
 def inv(m):
     a, b = m.shape
     if a != b:
@@ -87,7 +87,6 @@ def lda(dataMat, label, dimNum, classNum, classInNum, ImgNum):
         mess = np.reshape(mess, (-1, 1))
         mess1 = Train_PCA[:, i] - mess
         Sw[:, i] = mess1.flatten().reshape((-1, 1))
-    print('Swi', Sw.shape)
     Swi = Sw * (Sw.T)
 
     # Sb=np.zeros((dimNum,classNum))#类间散度矩阵
@@ -97,12 +96,11 @@ def lda(dataMat, label, dimNum, classNum, classInNum, ImgNum):
 
     # print('Sb',Sb.shape)
     # eigVals, eigVects = np.linalg.eig(inv(Swi) * Sbi)
-    eigVals, eigVects = np.linalg.eig(Swi * Sbi)
+    eigVals, eigVects = np.linalg.eig(inv(Swi) * Sbi)
     # print('eigVects',eigVects.shape)
     eigSortIndex = np.argsort(-eigVals)  # 按行降序排列(一行为一个特征),返回一个序列
     LDA_dimNum = classNum - 1
     W = eigVects[:, eigSortIndex[0:LDA_dimNum]]  # 取特征向量前 维
 
     Train_LDA = W.T * Train_PCA  # 训练集在LDA空间投影
-    # print('W',W)
     return W, Train_LDA

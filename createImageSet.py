@@ -100,8 +100,10 @@ def createTestMat(dirName, classNum, testNum, ImageSize):
         if index == 0:
             testMat = tempImg
             index += 1
+            print('加载测试图像'+str(i)+':'+'./' + str(dirName) + '/' +str(classNum) + '/' + 's' + str(i))
         else:
             testMat = np.column_stack((testMat, tempImg))
             testMat = np.mat(testMat)  # 列合并，然后转为矩阵
             index += 1
+            print('加载测试图像'+str(i)+':'+'./' + str(dirName) + '/' + str(classNum) + '/' + 's' + str(i))
     return testMat

@@ -28,7 +28,7 @@ def compare(disc_set, Train_LDA, W, label, testNum, classNum,k):
     #print('redV', W.shape)
     testImgSet=createImageSet.createTestMat('Yale',classNum,testNum,100*100)
     #testImgSet = createImageSet.createTestMat('Yale', testInClass, testNum, testInClass, 100 * 100)
-    testImgSet = disc_set.T*(testImgSet)
+    testImgSet = disc_set.T.dot(testImgSet)
     testImgSet = W.T*(testImgSet)
     #print('testSet',testImgSet.shape)
     resVal = 0
@@ -36,26 +36,28 @@ def compare(disc_set, Train_LDA, W, label, testNum, classNum,k):
         # TrainVec = FaceVector.T * diffTrain[:, i]
         #print(Train_LDA.shape)
         #print('res',res+1)
-        scs=int(KNN.classify0(testImgSet.T[res], Train_LDA.T, label, k))
-        if (scs == classNum):
+        testRes=int(KNN.classify0(testImgSet.T[res], Train_LDA.T, label, k))
+        if (testRes == classNum):
             resVal = resVal + 1
     correctCount = resVal / testNum  # 正确率
     print("correctCount", correctCount)
     return correctCount
 
  
-def getResult(dataMat, label, testNum, classNum):
+def getResult(dataMat, label, PCA_dim, testNum, classNum, classInNum ):
     '''
     加载每类测试集，计算总正确率
     :param dataMat: 训练集
     :param label: 训练集标签矩阵
     :param testNum: 每类测试集的测试个数
     :param classNum: 共几类
+    :param classInNum:每类有几个图
     :return:
     '''
     Count = 0
-    disc_set, disc_value = LDA.pca(dataMat, 85)
-    redVects, Train_LDA = LDA.lda(dataMat, label,85, 15, 11, 165)  # LDA投影空间，最终的训练集
+    disc_set, disc_value = LDA.pca(dataMat, PCA_dim)
+    Total=classNum*classInNum
+    redVects, Train_LDA = LDA.lda(dataMat, label,PCA_dim, classNum, classInNum, Total)  # LDA投影空间，最终的训练集
     for classnum in range(1, classNum + 1):
         print('第',classnum,'类')
         Count += compare(disc_set, Train_LDA, redVects, label, testNum,classnum, 7)
@@ -63,8 +65,13 @@ def getResult(dataMat, label, testNum, classNum):
 
 
 if __name__ == '__main__':
-    dataMat, label = createImageSet.createImageMat('Yale', 15, 11, 165, 100 * 100)
-    getResult(dataMat, label, 5, 15)
+    PCA_dim=50
+    testNum=2
+    classNum=15
+    classInNum=11
+    Train_Total=classNum*classInNum
+    dataMat, label = createImageSet.createImageMat('Yale', classNum, classInNum, Train_Total, 100 * 100)
+    getResult(dataMat, label, PCA_dim, testNum , classNum ,classInNum)
     # disc_set, disc_value = LDA.pca(dataMat, 50)
     # redVects, Train_LDA = LDA.lda(dataMat, 50, 15, 11, 165)  # LDA投影空间，最终的训练集
     # testImgSet = './Yale/1/s1.bmp'
