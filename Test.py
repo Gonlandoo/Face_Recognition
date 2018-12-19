@@ -55,7 +55,8 @@ def getResult(dataMat, label, PCA_dim, testNum, classNum, classInNum ):
     :return:
     '''
     Count = 0
-    disc_set, disc_value = LDA.pca(dataMat, PCA_dim)
+    # disc_set, disc_value ,meanFace= LDA.pca(dataMat, PCA_dim)
+    disc_set,x,y=LDA.pca(dataMat,PCA_dim)
     Total=classNum*classInNum
     redVects, Train_LDA = LDA.lda(dataMat, label,PCA_dim, classNum, classInNum, Total)  # LDA投影空间，最终的训练集
     for classnum in range(1, classNum + 1):
@@ -65,9 +66,9 @@ def getResult(dataMat, label, PCA_dim, testNum, classNum, classInNum ):
 
 
 if __name__ == '__main__':
-    PCA_dim=50
-    testNum=2
-    classNum=15
+    PCA_dim=40 #####从22开始识别率提升为1.0
+    testNum=10
+    classNum=17
     classInNum=11
     Train_Total=classNum*classInNum
     dataMat, label = createImageSet.createImageMat('Yale', classNum, classInNum, Train_Total, 100 * 100)

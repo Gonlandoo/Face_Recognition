@@ -39,13 +39,13 @@ def predict(dirName, testFileName):
     # testImg=cv2.imread(testFileName)
     # cv2.imshow("testImg",testImg)
     dataMat, label = createImageSet.createImageMat(dirName, 15, 11, 165, 100 * 100)
-    print('加载数据集矩阵', dataMat)
-    print('加载图片标签', label)
+    # print('加载数据集矩阵', dataMat)
+    # print('加载图片标签', label)
     ans = compare(dataMat, testFileName, label)
     return ans
-# if __name__ == '__main__':
-#      result=predict('Yale','./Yale/2/s1.bmp')
-#      print('result',result)
+if __name__ == '__main__':
+     result=predict('Yale','./Yale/17/s3.bmp')
+     print('result',result)
 
 # def judge(judgeImg,FaceVector,meanImg,diffMat):
 #     diff=judgeImg.T-meanImg

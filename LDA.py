@@ -1,6 +1,7 @@
 import numpy as np
 import numpy.linalg as lp
 import math
+from PIL import  Image
 
 
 def pca(dataMat, dimNum):
@@ -14,14 +15,22 @@ def pca(dataMat, dimNum):
     ImgInfo = dataMat.shape[0]
     # 去中心化
     meanMat = np.mean(dataMat, axis=1)  # 对行求均值
+
+    meanFace=meanMat.reshape((100,100))
+    meanFace=Image.fromarray(meanFace)
+    # meanFace.show()
+
     diffMat = dataMat - meanMat  # 偏差矩阵(去中心化后的特征矩阵)
     # 计算协方差矩阵
     eigVals, eigVects = np.linalg.eig(diffMat.T * diffMat / (ImgNum - 1))
     eigSortIndex = np.argsort(-eigVals)  # 按行降序排列(一行为一个特征),返回一个序列
     V = eigVects[:, eigSortIndex[0:dimNum]]  # 取特征向量前dimNum维
+    print('V',V.shape)
     # 取前dimNum大特征值
     for i in range(dimNum):
         S = eigVals[eigSortIndex[:i]]
+
+
 
     # 通过奇异值分解（小样本问题，因为样本维数远大于样本数），得到协方差矩阵特征向量
     disc_value = S
@@ -36,8 +45,8 @@ def pca(dataMat, dimNum):
         temp = Train_SET * V[:, j]
         temp = np.reshape(temp, (10000))
         disc_set[:, j] = (1 / math.sqrt(disc_value[:, j])) * temp
-    # print('PCA变换特征向量',disc_set.shape)
-    return disc_set, disc_value
+
+    return disc_set, disc_value,meanFace
 
 
 #奇异矩阵求逆
@@ -51,11 +60,21 @@ def inv(m):
 
 
 def lda(dataMat, label, dimNum, classNum, classInNum, ImgNum):
-    disc_set, disc_value = pca(dataMat, dimNum)
-    # print('ds',disc_set.shape)
-    # print('dataMat',dataMat.shape)
+    disc_set, disc_value ,meanFace= pca(dataMat, dimNum)
+    #meanFace.show()
+
+    # #PCA降维后得到的特征脸（40个）
+    # for i in range(0,dimNum):
+    #     Eigen=disc_set[:,i]*10000
+    #     Eigen=np.reshape(Eigen,(100,100))
+    #     Eigen=Image.fromarray(Eigen)
+    #     Eigen.show()
+
+
+
     Train_PCA = disc_set.T * (dataMat)  # 训练样本PCA投影集
-    # print('Train_PCA',Train_PCA.shape)
+    #print(Train_PCA.shape)
+    #print('Train_PCA',Train_PCA.shape)
     Mean_all = np.mean(Train_PCA, axis=1)  # 所有训练样本的均值
     Mean_classMat = np.zeros((dimNum, classNum))  # 每类样本均值矩阵
     classMat = np.zeros((dimNum, classInNum))  # 每类样本矩阵
@@ -101,6 +120,5 @@ def lda(dataMat, label, dimNum, classNum, classInNum, ImgNum):
     eigSortIndex = np.argsort(-eigVals)  # 按行降序排列(一行为一个特征),返回一个序列
     LDA_dimNum = classNum - 1
     W = eigVects[:, eigSortIndex[0:LDA_dimNum]]  # 取特征向量前 维
-
     Train_LDA = W.T * Train_PCA  # 训练集在LDA空间投影
     return W, Train_LDA

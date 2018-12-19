@@ -1,16 +1,21 @@
 # coding:utf8
 import threading
+
 import numpy as np
 import os
+
 import cv2
+
 import ImageSet
 import LDA
 import createImageSet
+
 camera = cv2.VideoCapture(0)
+
+
 def detect(dataMat, label):
     # 创建人脸检测的对象
-    face_cascade = cv2.CascadeClassifier("./venv/Lib/site-packages/cv2/data/haarcascade_frontalface_default"
-                                         ".xml")
+    face_cascade = cv2.CascadeClassifier("./venv/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml")
 
     k = 0
 
@@ -31,10 +36,10 @@ def detect(dataMat, label):
             roi_gray = gray[y: y + h, x: x + w]
             img = cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
             img1 = frame[y: y + h, x: x + w]
-            cv2.imwrite('./pic/s0.bmp', roi_gray)
-            pic = cv2.imread('./pic/s0.bmp')
+            cv2.imwrite('./pic1/s0.bmp', roi_gray)
+            pic = cv2.imread('./pic1/s0.bmp')
             pic = cv2.resize(pic, (100, 100), interpolation=cv2.INTER_CUBIC)
-            os.remove('./pic/s0.bmp')
+            os.remove('./pic1/s0.bmp')
             cv2.imwrite('./pic/s0.bmp', pic)
             # print("hello world")
         if k == 0:
@@ -98,8 +103,8 @@ def testPic(dataMat, label):
         if not os.path.isfile(testImgSet):
             continue
 
-        disc_set, disc_value = LDA.pca(dataMat, 50)
-        redVects, Train_LDA = LDA.lda(dataMat, label, 50, 17, 11, 11 * 17)  # LDA投影空间，最终的训练集
+        disc_set, disc_value ,meanFace= LDA.pca(dataMat, 40)
+        redVects, Train_LDA = LDA.lda(dataMat, label, 40, 17, 11, 11 * 17)  # LDA投影空间，最终的训练集
 
         # testImgSet = createImageSet.createTestMat('Yale', testInClass, testNum, testInClass, 100 * 100)
         testImgSet = ImageSet.HistogramEqualization(testImgSet)
@@ -157,6 +162,7 @@ def testPic(dataMat, label):
                         # break
                         camera.release()
                     j = 0
+
 
 if __name__ == '__main__':
     dataMat, label = createImageSet.createImageMat('Yale', 17, 11, 11 * 17, 100 * 100)

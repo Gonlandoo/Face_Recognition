@@ -41,16 +41,16 @@ import numpy as np
     # return lowMat,redEigVects
 def pca(dataMat,selecthr):
     meanMat=np.mean(dataMat,axis=1)#对行求均值，计算平均图像
-    print('样本矩阵',dataMat)
-    print('平均图像',meanMat)
+    # print('样本矩阵',dataMat)
+    # print('平均图像',meanMat)
     diffMat=dataMat-meanMat#偏差矩阵
-    print('偏差矩阵维度',diffMat.shape)
-    print('偏差矩阵',diffMat)
-
-    print('计算特征值 特征向量')
+    # print('偏差矩阵维度',diffMat.shape)
+    # print('偏差矩阵',diffMat)
+    #
+    # print('计算特征值 特征向量')
     eigVals,eigVects=np.linalg.eig(diffMat.T*diffMat)
-    print('特征值',eigVals.shape)
-    print('特征向量维度',eigVects.shape)
+    # print('特征值',eigVals.shape)
+    # print('特征向量维度',eigVects.shape)
     eigSortIndex=np.argsort(-eigVals)#按行降序排列(一行为一个特征),返回一个序列
 
     np.seterr(divide='ignore', invalid='ignore')
@@ -60,7 +60,7 @@ def pca(dataMat,selecthr):
             break
     #print('排序后的特征值',eigVects[:,eigSortIndex])
     covVects=diffMat*eigVects[:,eigSortIndex]#协方差矩阵的特征向量
-    print('协方差矩阵特征向量维度',covVects.shape)
+    #print('协方差矩阵特征向量维度',covVects.shape)
     # print('变换矩阵维度',diffMat.shape)
     lowMat=covVects.T*diffMat
     # print('降维后的样本矩阵维度',lowMat.shape)
