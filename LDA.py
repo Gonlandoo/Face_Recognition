@@ -25,7 +25,7 @@ def pca(dataMat, dimNum):
     eigVals, eigVects = np.linalg.eig(diffMat.T * diffMat / (ImgNum - 1))
     eigSortIndex = np.argsort(-eigVals)  # 按行降序排列(一行为一个特征),返回一个序列
     V = eigVects[:, eigSortIndex[0:dimNum]]  # 取特征向量前dimNum维
-    print('V',V.shape)
+    #print('V',V.shape)
     # 取前dimNum大特征值
     for i in range(dimNum):
         S = eigVals[eigSortIndex[:i]]
